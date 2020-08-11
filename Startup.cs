@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StackExchange.Redis;
+using System;
 
 namespace SignalrRedis
 {
@@ -19,6 +21,39 @@ namespace SignalrRedis
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var builder = services.AddSignalR();
+            bool.TryParse(Configuration["UseRedisBackplane"], out var useRedisBackplane);
+
+            if (useRedisBackplane)
+            {
+                builder.AddStackExchangeRedis(o =>
+                {
+                    o.ConnectionFactory = async writer =>
+                    {
+                        var config = new ConfigurationOptions
+                        {
+                            AbortOnConnectFail = false,
+                            Password = Configuration["RedisSettings:Password"]
+                        };
+                        config.EndPoints.Add(Configuration["RedisSettings:Host"], 0);
+                        config.SetDefaultPorts();
+                        var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
+                        connection.ConnectionFailed += (_, e) =>
+                        {
+                            Console.WriteLine("Connection to Redis failed.");
+                        };
+
+                        if (!connection.IsConnected)
+                        {
+                            Console.WriteLine("Did not connect to Redis.");
+                        }
+
+                        return connection;
+                    };
+                });
+            }
+
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -49,9 +84,7 @@ namespace SignalrRedis
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<ChatHub>("/ChatHub");
             });
 
             app.UseSpa(spa =>
@@ -63,7 +96,7 @@ namespace SignalrRedis
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
         }

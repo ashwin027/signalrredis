@@ -1,6 +1,25 @@
-<body>
-  <app-nav-menu></app-nav-menu>
-  <div class="container">
-    <router-outlet></router-outlet>
+<div class="container">
+  <div class="row">&nbsp;</div>
+  <div class="row">
+      <div class="col-6">&nbsp;</div>
+      <div class="col-6">
+          <input type="text" id="messageInput" [(ngModel)]="message" placeholder="Send Message"/>
+          <button type="button" (click)="sendMessage()">Send</button>
+      </div>
   </div>
-</body>
+  <div class="row">
+      <div class="col-12">
+          <hr />
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-6">&nbsp;</div>
+      <div class="col-6">
+          <ul id="messagesList">
+            <li *ngFor="let message of messages">
+              {{message}}
+            </li>
+          </ul>
+      </div>
+  </div>
+</div>
