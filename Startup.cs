@@ -23,9 +23,10 @@ namespace SignalrRedis
         {
             var builder = services.AddSignalR();
             bool.TryParse(Configuration["UseRedisBackplane"], out var useRedisBackplane);
-
+            Console.WriteLine($"Use redis:{useRedisBackplane}");
             if (useRedisBackplane)
             {
+                Console.WriteLine($"Connecting to redis at {Configuration["RedisSettings:Host"]}.");
                 builder.AddStackExchangeRedis(o =>
                 {
                     o.ConnectionFactory = async writer =>

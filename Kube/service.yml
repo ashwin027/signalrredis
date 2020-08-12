@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  signalrredis-service
+spec:
+  selector:
+    app:  signalrredis
+  ports:
+  - name:  signalrredis-port
+    port:  80
+    targetPort:  80
+  sessionAffinity: ClientIP

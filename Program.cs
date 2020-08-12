@@ -24,6 +24,7 @@ namespace SignalrRedis
                     {
                         builder.AddUserSecrets<Program>();
                     }
+                    builder.AddEnvironmentVariables();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

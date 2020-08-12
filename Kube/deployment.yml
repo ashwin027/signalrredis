@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signalrredis-deployment
+  labels:
+    app: signalrredis
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: signalrredis
+  template:
+    metadata:
+      labels:
+        app: signalrredis
+    spec:
+      containers:
+      - name: signalrredis
+        image: ashwin027/signalrredis:latest
+        env:
+        - name: ASPNETCORE_UseRedisBackplane
+          value: "true"
+        - name: ASPNETCORE_RedisSettings__Host
+          value: "signalrbackplane-redis-master.default.svc.cluster.local"
+        - name: ASPNETCORE_RedisSettings__Password
+          valueFrom:
+            secretKeyRef:
+              name: redispassword
+              key: redispassword
+        ports:
+        - containerPort: 80
