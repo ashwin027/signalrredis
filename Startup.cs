@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StackExchange.Redis;
 using System;
+using SignalrRedis.Config;
 
 namespace SignalrRedis
 {
@@ -21,12 +22,15 @@ namespace SignalrRedis
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var redisConfigSection = Configuration.GetSection(RedisConfig.RedisConfigKey);
+            var redisConfig = redisConfigSection.Get<RedisConfig>();
+
             var builder = services.AddSignalR();
-            bool.TryParse(Configuration["UseRedisBackplane"], out var useRedisBackplane);
-            Console.WriteLine($"Use redis:{useRedisBackplane}");
-            if (useRedisBackplane)
+            Console.WriteLine($"Use redis:{redisConfig.UseAsBackplane}");
+
+            if (redisConfig.UseAsBackplane)
             {
-                Console.WriteLine($"Connecting to redis at {Configuration["RedisSettings:Host"]}.");
+                Console.WriteLine($"Connecting to redis at {redisConfig.Settings.Host}.");
                 builder.AddStackExchangeRedis(o =>
                 {
                     o.ConnectionFactory = async writer =>
@@ -34,9 +38,9 @@ namespace SignalrRedis
                         var config = new ConfigurationOptions
                         {
                             AbortOnConnectFail = false,
-                            Password = Configuration["RedisSettings:Password"]
+                            Password = redisConfig.Settings.Password
                         };
-                        config.EndPoints.Add(Configuration["RedisSettings:Host"], 0);
+                        config.EndPoints.Add(redisConfig.Settings.Host, 0);
                         config.SetDefaultPorts();
                         var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
                         connection.ConnectionFailed += (_, e) =>
@@ -54,8 +58,8 @@ namespace SignalrRedis
                 });
             }
 
-
             services.AddControllersWithViews();
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
