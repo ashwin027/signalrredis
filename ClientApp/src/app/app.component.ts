@@ -11,6 +11,7 @@ export class AppComponent implements OnInit {
   connection: signalR.HubConnection;
   messages: Array<string> = new Array<string>();
   message: string;
+  podName: string;
 
   ngOnInit(): void {
     this.startConnAndListen();
@@ -34,7 +35,16 @@ export class AppComponent implements OnInit {
 
       this.connection.start().then(() => {
         this.connection.on("ChatMessageReceived", (message) => {
-          this.messages.push(message);
+          setTimeout(() => {
+            this.messages.push(message);
+            this.messages = [...this.messages];
+          }, 0);
+          
+        });
+        this.connection.on("PodName", (podName) => {
+          setTimeout(() => {
+            this.podName = podName;
+          }, 0);
         });
       });
     } catch (e) {

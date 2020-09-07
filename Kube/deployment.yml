@@ -18,14 +18,18 @@ spec:
       - name: signalrredis
         image: ashwin027/signalrredis:latest
         env:
-        - name: ASPNETCORE_UseRedisBackplane
-          value: "true"
-        - name: ASPNETCORE_RedisSettings__Host
-          value: "signalrbackplane-redis-master.default.svc.cluster.local"
-        - name: ASPNETCORE_RedisSettings__Password
+        - name: RedisConfig__UseAsBackplane
+          value: "false"
+        - name: RedisConfig__Settings__Host
+          value: "SET_REDIS_HOST_URL_HERE"
+        - name: RedisConfig__Settings__Password
           valueFrom:
             secretKeyRef:
               name: redispassword
               key: redispassword
+        - name: PodName
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         ports:
         - containerPort: 80

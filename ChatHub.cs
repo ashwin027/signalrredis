@@ -10,6 +10,7 @@ namespace SignalrRedis
     {
         public async Task NewChatMessage(string chatMessage)
         {
+            await Clients.All.SendAsync("PodName", Environment.GetEnvironmentVariable("PodName"));
             await Clients.All.SendAsync("ChatMessageReceived", chatMessage);
         }
     }
