@@ -21,7 +21,7 @@ spec:
         - name: RedisConfig__UseAsBackplane
           value: "false"
         - name: RedisConfig__Settings__Host
-          value: "SET_REDIS_HOST_URL_HERE"
+          value: "sigredis-master.signalrredis.svc.cluster.local"
         - name: RedisConfig__Settings__Password
           valueFrom:
             secretKeyRef:
