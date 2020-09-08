@@ -1,10 +1,9 @@
-Commands to run
+### Commands to run
 kubectl create namespace signalrredis
 
 helm upgrade --install sigredis redis/ --namespace signalrredis
 
-
-Output from redis
+### Output from redis
 
 Release "sigredis" does not exist. Installing it now.
 NAME: sigredis
