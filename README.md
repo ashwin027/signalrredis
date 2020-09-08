@@ -1,5 +1,5 @@
 # Signal R Redis
-This is the sample application for the blog titled [Scaling Signal R Core Web Applications on Kubernetes](https://medium.com/@ashwin027/scaling-signal-r-core-web-applications-on-kubernetes-fca32d787c7d).
+This is the sample application for the blog [Scaling Signal R Core Web Applications on Kubernetes](https://medium.com/@ashwin027/scaling-signal-r-core-web-applications-on-kubernetes-fca32d787c7d).
 
 ## Local Build
 * Build and run the app through visual studio or from the command line using the dotnet cli
